@@ -4,10 +4,6 @@
 
 using namespace std;
 
-//void SearchStack01(int pnt,int tm);
-//void SearchStack02(int pnt, int tm);
-//void roundRobin();
-//void AddQue(int pnt);
 
 class VehiculoTipo1{
 public:
@@ -179,10 +175,12 @@ void AddQue(int pnt){
 
 
 void *roundRobin(void *vacio){
-    cout<<"\n ALGORITMO ROUND ROBIN : PARA 2 PROCESOS\n";
+    cout<<"\n \n";
+    /* cout<<"\n \n  ALGORITMO ROUND ROBIN : PARA 2 PROCESOS\n";
     cout<<"\n\t\t Aquí algunos atributos usados en el programa \n";
     cout<<"AT = Tiempo de llegada \nBT = Tiempo total de CPU \nCT = Tiempo de finalizacion \nTT = Tiempo de respuesta \nWT = Tiempo de espera \n\n";
-    for(int x=0;x<2;x++){
+    */
+     for(int x=0;x<2;x++){
         cout<<"\nProceso "<<x+1;
         cout<<"\nTiempo de llegada en el que se inicia el proceso = ";
         cin>>at[x];
@@ -191,6 +189,7 @@ void *roundRobin(void *vacio){
         btm[x]=bt[x];}
     //cout<<"\n Ingrese el quantum : ";
     //cin>>qt;
+    //Quantum qt
     qt=1;
 
     cout<<endl<<"Diagrama GANTT"<<endl<<at[0];
@@ -231,7 +230,11 @@ void *roundRobin(void *vacio){
             ct[pnt]=tm;
         }
         flg++;1;
-        cout<<"]-P"<<pnt+1<<"-["<<tm;
+        //cout<<"]-P"<<pnt+1<<"-["<<tm;
+        cout<<" < inicia [Proceso "<<pnt+1<<"]"<<" termina > "<<tm;
+
+
+
     }while(noe!=0);1;
     cout<<"\n\nPROCESO \t  Tiempo de llegada \t  Tiempo total de CPU \t  Tiempo de finalizacion \t  Tiempo de respuesta \t  Tiempo de espera \n";
     for(int x=0;x<2;x++){
@@ -249,7 +252,7 @@ void procesosSimultaneosPorLinea(){
     pthread_t hilo1;
     pthread_create(&hilo1, NULL,&roundRobin,vacio);
     pthread_join(hilo1, NULL);
-
+    /*
     pthread_t hilo2;
     pthread_create(&hilo2, NULL,&roundRobin,vacio);
     pthread_join(hilo2, NULL);
@@ -257,12 +260,12 @@ void procesosSimultaneosPorLinea(){
     pthread_t hilo3;
     pthread_create(&hilo3, NULL,&roundRobin,vacio);
     pthread_join(hilo3, NULL);
-
+    */
 }
 
 int main()
 {
-    //error al ejecutar este metodo
+
     procesosSimultaneosPorLinea();
 
 }
