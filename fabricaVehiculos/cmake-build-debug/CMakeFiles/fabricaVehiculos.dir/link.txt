@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/fabricaVehiculos.dir/main.cpp.o  -o fabricaVehiculos 
+/usr/bin/c++  -std=c++11 -pthread -g   CMakeFiles/fabricaVehiculos.dir/main.cpp.o  -o fabricaVehiculos 
