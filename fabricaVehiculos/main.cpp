@@ -148,7 +148,7 @@ VehiculoTipo6 vehiculoTipo6;
 
 
 void SearchStack01(int pnt,int tm){
-    for(int x=pnt+1;x<2;x++){
+    for(int x=pnt+1;x<6;x++){
         if(at[x]<=tm){
             rqi[noe]=x+1;
             noe++;}
@@ -156,7 +156,7 @@ void SearchStack01(int pnt,int tm){
 }
 
 void SearchStack02(int pnt, int tm){
-    for(int x=pnt+1;x<2;x++){
+    for(int x=pnt+1;x<6;x++){
         //---CheckQue
         int fl=0;
         for(int y=0;y<noe;y++){
@@ -180,7 +180,7 @@ void *roundRobin(void *vacio){
     cout<<"\n\t\t Aquí algunos atributos usados en el programa \n";
     cout<<"AT = Tiempo de llegada \nBT = Tiempo total de CPU \nCT = Tiempo de finalizacion \nTT = Tiempo de respuesta \nWT = Tiempo de espera \n\n";
     */
-     for(int x=0;x<2;x++){
+     for(int x=0;x<6;x++){
         cout<<"\nProceso "<<x+1;
         cout<<"\nTiempo de llegada en el que se inicia el proceso = ";
         cin>>at[x];
@@ -237,14 +237,14 @@ void *roundRobin(void *vacio){
 
     }while(noe!=0);1;
     cout<<"\n\nPROCESO \t  Tiempo de llegada \t  Tiempo total de CPU \t  Tiempo de finalizacion \t  Tiempo de respuesta \t  Tiempo de espera \n";
-    for(int x=0;x<2;x++){
+    for(int x=0;x<6;x++){
         tt=ct[x]-at[x];
         wt=tt-bt[x];
         cout<<"  P "<<x+1<<"                 "<<at[x]<<"                     "<<bt[x]<<"                          "<<ct[x]<<"                        "<<tt<<"                       "<<wt<<"\n";
         awt=awt+wt;
         att=att+tt;
     }
-    cout<<"\n Promedio del tiempo de respuesta : "<<att/2<<"\n Promedio de espera : "<<awt/2;
+    cout<<"\n Promedio del tiempo de respuesta : "<<att/6<<"\n Promedio de espera : "<<awt/6;
 }
 
 void procesosSimultaneosPorLinea(){
