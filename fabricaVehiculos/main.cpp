@@ -1,6 +1,7 @@
 //ROUND ROBIN//
 #include <pthread.h>
 #include<iostream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -137,8 +138,8 @@ public:
     }
 };
 
-int at[50], bt[50], ct[50]={0}, qt, rqi[50]={0}, c=0, st, flg=0, tm=0, noe=0, pnt=0, btm[50]={0}, tt, wt;
-float att, awt;
+int tiempoDeLlegada[50], tiempoTotalAux[50], TiempoFinal[50]={0}, quantum, rqi[50]={0}, c=0, st, flag=0, Time=0, noe=0, proceso=0, tiempoTotal[50]={0}, tiempoDeRespuesta, tiempoDeEspera;
+float att, awt ;
 VehiculoTipo1 vehiculoTipo1;
 VehiculoTipo2 vehiculoTipo2;
 VehiculoTipo3 vehiculoTipo3;
@@ -146,30 +147,30 @@ VehiculoTipo4 vehiculoTipo4;
 VehiculoTipo5 vehiculoTipo5;
 VehiculoTipo6 vehiculoTipo6;
 
-
-void SearchStack01(int pnt,int tm){
-    for(int x=pnt+1;x<6;x++){
-        if(at[x]<=tm){
+void SearchStack01(int proceso,int time){
+    for(int x=proceso+1;x<6;x++){
+        if(tiempoDeLlegada[x]<=time){
             rqi[noe]=x+1;
             noe++;}
     }
+
 }
 
-void SearchStack02(int pnt, int tm){
-    for(int x=pnt+1;x<6;x++){
+void SearchStack02(int proceso, int time){
+    for(int x=proceso+1;x<6;x++){
         //---CheckQue
         int fl=0;
         for(int y=0;y<noe;y++){
             if(rqi[y]==x+1){
                 fl++;}}
-        if(at[x]<=tm && fl==0 && btm[x]!=0){
+        if(tiempoDeLlegada[x]<=time && fl==0 && tiempoTotal[x]!=0){
             rqi[noe]=x+1;
             noe++;}
     }
 }
 
-void AddQue(int pnt){
-    rqi[noe]=pnt+1;
+void AddQue(int proceso){
+    rqi[noe]=proceso+1;
     noe++;
 }
 
@@ -183,66 +184,77 @@ void *roundRobin(void *vacio){
      for(int x=0;x<6;x++){
         cout<<"\nProceso "<<x+1;
         cout<<"\nTiempo de llegada en el que se inicia el proceso = ";
-        cin>>at[x];
+        cin>>tiempoDeLlegada[x];
         cout << "Tiempo total de CPU que se requiere para terminar el proceso = ";
-        cin>>bt[x];
-        btm[x]=bt[x];}
+        cin>>tiempoTotalAux[x];
+        tiempoTotal[x]=tiempoTotalAux[x];}
     //cout<<"\n Ingrese el quantum : ";
     //cin>>qt;
     //Quantum qt
-    qt=1;
+    quantum=1;
 
-    cout<<endl<<"Diagrama GANTT"<<endl<<at[0];
+    cout<<endl<<"Diagrama GANTT"<<endl<<tiempoDeLlegada[0];
     do{
-        if(flg==0){
-            st=at[0];
-            //---ReduceBT
-            if(btm[0]<=qt){
-                tm=st+btm[0];
-                btm[0]=0;
-                SearchStack01(pnt,tm);}
+        if(flag==0){
+            st=tiempoDeLlegada[0];
+            //---Reduce el tiempo total
+            if(tiempoTotal[0]<=quantum){
+                Time=st+tiempoTotal[0];
+                tiempoTotal[0]=0;
+                cout<<" [el primer proceso finalizo porque el tiempo total es <= al quantum] ";
+                usleep(200000);
+                SearchStack01(proceso,Time);}
             else{
-                btm[0]=btm[0]-qt;
-                tm=st+qt;
-                SearchStack01(pnt,tm);
-                AddQue(pnt);}
+                tiempoTotal[0]=tiempoTotal[0]-quantum;
+                Time=st+quantum;
+                cout<<" [se ejecuto el primer proceso durante 1 quantum de un segundo aun falta por ejecutarse mas] ";
+                usleep(200000);
+                SearchStack01(proceso,Time);
+                AddQue(proceso);}
         }
         else{
-            pnt=rqi[0]-1;
-            st=tm;
-            //---DeleteQue
+            proceso=rqi[0]-1;
+            st=Time;
+            //---Borra de la cola
             for(int x=0;x<noe && noe!=1;x++){
                 rqi[x]=rqi[x+1];}
             noe--;
-            //---ReduceBT
-            if(btm[pnt]<=qt){
-                tm=st+btm[pnt];
-                btm[pnt]=0;
-                SearchStack02(pnt, tm);}
+            //cout<<" proceso "<<proceso+1<<" en el tiempo "<<Time<<" ejecutandose ";
+            //usleep(200000);
+            //---Reduce el tiempo total
+            if(tiempoTotal[proceso]<=quantum){
+                Time=st+tiempoTotal[proceso];
+                tiempoTotal[proceso]=0;
+                cout<<" [el proceso "<<proceso+1<<" termino de ejecutarse porque el tiempo total es menor al quantum] ";
+                usleep(200000);
+                SearchStack02(proceso, Time);}
             else{
-                btm[pnt]=btm[pnt]-qt;
-                tm=st+qt;
-                SearchStack02(pnt, tm);
-                AddQue(pnt);}
+                tiempoTotal[proceso]=tiempoTotal[proceso]-quantum;
+                Time=st+quantum;
+                cout<<" [el proceso "<<proceso+1<<" se ha ejecutado durante 1 quantum de un segundo aun falta por ejecutarse mas] ";
+                usleep(200000);
+                SearchStack02(proceso, Time);
+                AddQue(proceso);}
         }
-        //AssignCTvalue
-        if(btm[pnt]==0){
-            ct[pnt]=tm;
+        //Asigna el tiempo final
+        if(tiempoTotal[proceso]==0){
+            TiempoFinal[proceso]=Time;
         }
-        flg++;1;
+        flag++;1;
         //cout<<"]-P"<<pnt+1<<"-["<<tm;
-        cout<<" < inicia [Proceso "<<pnt+1<<"]"<<" termina > "<<tm;
+        cout<<" < inicia [Proceso "<<proceso+1<<"]"<<" termina > "<<Time;
+        usleep(100000);
 
 
 
     }while(noe!=0);1;
     cout<<"\n\nPROCESO \t  Tiempo de llegada \t  Tiempo total de CPU \t  Tiempo de finalizacion \t  Tiempo de respuesta \t  Tiempo de espera \n";
     for(int x=0;x<6;x++){
-        tt=ct[x]-at[x];
-        wt=tt-bt[x];
-        cout<<"  P "<<x+1<<"                 "<<at[x]<<"                     "<<bt[x]<<"                          "<<ct[x]<<"                        "<<tt<<"                       "<<wt<<"\n";
-        awt=awt+wt;
-        att=att+tt;
+        tiempoDeRespuesta=TiempoFinal[x]-tiempoDeLlegada[x];
+        tiempoDeEspera=tiempoDeRespuesta-tiempoTotalAux[x];
+        cout<<"  P "<<x+1<<"                 "<<tiempoDeLlegada[x]<<"                     "<<tiempoTotalAux[x]<<"                          "<<TiempoFinal[x]<<"                        "<<tiempoDeRespuesta<<"                       "<<tiempoDeEspera<<"\n";
+        awt=awt+tiempoDeEspera;
+        att=att+tiempoDeRespuesta;
     }
     cout<<"\n Promedio del tiempo de respuesta : "<<att/6<<"\n Promedio de espera : "<<awt/6;
 }
