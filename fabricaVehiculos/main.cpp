@@ -26,6 +26,8 @@ public:
     int tiempoProcesoF(){
         return 1;
     }
+
+    int linea1[6]={tiempoProcesoA(),tiempoProcesoB(),tiempoProcesoC(),tiempoProcesoD(),tiempoProcesoE(),tiempoProcesoF()};
 };
 
 class VehiculoTipo2{
@@ -48,6 +50,8 @@ public:
     int tiempoProcesoF(){
         return 1;
     }
+
+    int linea2[6]={tiempoProcesoC(),tiempoProcesoA(),tiempoProcesoB(),tiempoProcesoE(),tiempoProcesoD(),tiempoProcesoF()};
 };
 
 class VehiculoTipo3{
@@ -70,6 +74,8 @@ public:
     int tiempoProcesoF(){
         return 1;
     }
+
+    int linea3[6]={tiempoProcesoD(),tiempoProcesoE(),tiempoProcesoA(),tiempoProcesoC(),tiempoProcesoB(),tiempoProcesoF()};
 };
 
 class VehiculoTipo4{
@@ -92,6 +98,8 @@ public:
     int tiempoProcesoE(){
         return 1;
     }
+
+    int linea4[6]={tiempoProcesoB(),tiempoProcesoC(),tiempoProcesoD(),tiempoProcesoA(),tiempoProcesoF(),tiempoProcesoE()};
 };
 
 class VehiculoTipo5{
@@ -114,6 +122,8 @@ public:
     int tiempoProcesoD(){
         return 3;
     }
+
+    int linea5[6]={tiempoProcesoE(),tiempoProcesoF(),tiempoProcesoB(),tiempoProcesoC(),tiempoProcesoA(),tiempoProcesoD()};
 };
 
 class VehiculoTipo6{
@@ -136,9 +146,11 @@ public:
     int tiempoProcesoA(){
         return 4;
     }
+
+    int linea6[6]={tiempoProcesoF(),tiempoProcesoD(),tiempoProcesoC(),tiempoProcesoB(),tiempoProcesoE(),tiempoProcesoA()};
 };
 
-int tiempoDeLlegada[50], tiempoTotalAux[50], TiempoFinal[50]={0}, quantum, rqi[50]={0}, c=0, st, flag=0, Time=0, noe=0, proceso=0, tiempoTotal[50]={0}, tiempoDeRespuesta, tiempoDeEspera;
+int tiempoDeLlegada[6], tiempoTotalAux[6], TiempoFinal[6]={0}, quantum, rqi[50]={0}, c=0, st, flag=0, Time=0, noe=0, proceso=0, tiempoTotal[6]={0}, tiempoDeRespuesta, tiempoDeEspera;
 float att, awt ;
 VehiculoTipo1 vehiculoTipo1;
 VehiculoTipo2 vehiculoTipo2;
@@ -175,12 +187,22 @@ void AddQue(int proceso){
 }
 
 
-void *roundRobin(void *vacio){
+void roundRobin(int lineaProceso[]){
     cout<<"\n \n";
     /* cout<<"\n \n  ALGORITMO ROUND ROBIN : PARA 2 PROCESOS\n";
     cout<<"\n\t\t Aquí algunos atributos usados en el programa \n";
     cout<<"AT = Tiempo de llegada \nBT = Tiempo total de CPU \nCT = Tiempo de finalizacion \nTT = Tiempo de respuesta \nWT = Tiempo de espera \n\n";
     */
+
+    for(int i=0;i<6;i++){
+        tiempoTotalAux[i]=lineaProceso[i];
+        tiempoTotal[i]=tiempoTotalAux[i];
+    }
+    for(int i=0;i<6;i++){
+        tiempoDeLlegada[i]=i+1;
+    }
+
+    /*
      for(int x=0;x<6;x++){
         cout<<"\nProceso "<<x+1;
         cout<<"\nTiempo de llegada en el que se inicia el proceso = ";
@@ -188,12 +210,14 @@ void *roundRobin(void *vacio){
         cout << "Tiempo total de CPU que se requiere para terminar el proceso = ";
         cin>>tiempoTotalAux[x];
         tiempoTotal[x]=tiempoTotalAux[x];}
+        */
     //cout<<"\n Ingrese el quantum : ";
     //cin>>qt;
     //Quantum qt
     quantum=1;
 
-    cout<<endl<<"Diagrama GANTT"<<endl<<tiempoDeLlegada[0];
+    cout<<endl<<"Diagrama GANTT"<<endl;
+    //cout<<tiempoDeLlegada[0];
     do{
         if(flag==0){
             st=tiempoDeLlegada[0];
@@ -201,13 +225,13 @@ void *roundRobin(void *vacio){
             if(tiempoTotal[0]<=quantum){
                 Time=st+tiempoTotal[0];
                 tiempoTotal[0]=0;
-                cout<<" [el primer proceso finalizo porque el tiempo total es <= al quantum] ";
+                cout<<"   [el primer proceso finalizo porque el tiempo total es menor o igual al quantum]   ";
                 usleep(200000);
                 SearchStack01(proceso,Time);}
             else{
                 tiempoTotal[0]=tiempoTotal[0]-quantum;
                 Time=st+quantum;
-                cout<<" [se ejecuto el primer proceso durante 1 quantum de un segundo aun falta por ejecutarse mas] ";
+                cout<<"   [se ejecuto el primer proceso durante 1 quantum de un segundo aun falta por ejecutarse mas]   ";
                 usleep(200000);
                 SearchStack01(proceso,Time);
                 AddQue(proceso);}
@@ -225,13 +249,13 @@ void *roundRobin(void *vacio){
             if(tiempoTotal[proceso]<=quantum){
                 Time=st+tiempoTotal[proceso];
                 tiempoTotal[proceso]=0;
-                cout<<" [el proceso "<<proceso+1<<" termino de ejecutarse porque el tiempo total es menor al quantum] ";
+                cout<<"   [el proceso "<<proceso+1<<" termino de ejecutarse porque el tiempo total es menor o igual al quantum]   ";
                 usleep(200000);
                 SearchStack02(proceso, Time);}
             else{
                 tiempoTotal[proceso]=tiempoTotal[proceso]-quantum;
                 Time=st+quantum;
-                cout<<" [el proceso "<<proceso+1<<" se ha ejecutado durante 1 quantum de un segundo aun falta por ejecutarse mas] ";
+                cout<<"   [el proceso "<<proceso+1<<" se ha ejecutado durante 1 quantum de un segundo aun falta por ejecutarse mas]   ";
                 usleep(200000);
                 SearchStack02(proceso, Time);
                 AddQue(proceso);}
@@ -242,7 +266,7 @@ void *roundRobin(void *vacio){
         }
         flag++;1;
         //cout<<"]-P"<<pnt+1<<"-["<<tm;
-        cout<<" < inicia [Proceso "<<proceso+1<<"]"<<" termina > "<<Time;
+        //cout<<" < inicia [Proceso "<<proceso+1<<"]"<<" termina > "<<Time;
         usleep(100000);
 
 
@@ -259,12 +283,13 @@ void *roundRobin(void *vacio){
     cout<<"\n Promedio del tiempo de respuesta : "<<att/6<<"\n Promedio de espera : "<<awt/6;
 }
 
+/*
 void procesosSimultaneosPorLinea(){
     void * vacio;
     pthread_t hilo1;
     pthread_create(&hilo1, NULL,&roundRobin,vacio);
     pthread_join(hilo1, NULL);
-    /*
+
     pthread_t hilo2;
     pthread_create(&hilo2, NULL,&roundRobin,vacio);
     pthread_join(hilo2, NULL);
@@ -272,13 +297,13 @@ void procesosSimultaneosPorLinea(){
     pthread_t hilo3;
     pthread_create(&hilo3, NULL,&roundRobin,vacio);
     pthread_join(hilo3, NULL);
-    */
-}
 
+}
+*/
 int main()
 {
 
-    procesosSimultaneosPorLinea();
+    roundRobin(vehiculoTipo1.linea1);
 
 }
 
