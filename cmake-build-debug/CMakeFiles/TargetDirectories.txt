@@ -1,0 +1,3 @@
+/home/aaron/CLionProjects/interfaz_Procesos/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/aaron/CLionProjects/interfaz_Procesos/cmake-build-debug/CMakeFiles/interfaz_Procesos.dir
+/home/aaron/CLionProjects/interfaz_Procesos/cmake-build-debug/CMakeFiles/edit_cache.dir
